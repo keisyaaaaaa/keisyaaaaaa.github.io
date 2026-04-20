@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV — Keisya Salma Fajar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --accent: #c8a97e;
+      --accent2: #e8c99a;
+      --text: #f0ede8;
+      --text-muted: #8a8580;
+      --text-dim: #5a5550;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── LOADING SCREEN ── */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 32px;
+    }
+
+    .loader-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 10vw, 96px);
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: -2px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .loader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: var(--border);
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 0.4s ease forwards 0.8s;
+    }
+
+    .loader-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+      animation: loadBar 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards 1s;
+    }
+
+    .loader-text {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0;
+      animation: fadeIn 0.4s ease forwards 0.8s;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease 0.2s;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px clamp(20px, 5vw, 60px);
+      backdrop-filter: blur(20px);
+      background: rgba(13,13,13,0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column; gap: 5px; cursor: pointer; padding: 4px;
+    }
+    .nav-toggle span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--text); transition: all 0.3s;
+    }
+    .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(4.5px, 4.5px); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); }
+
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 99;
+      background: var(--bg); flex-direction: column;
+      align-items: center; justify-content: center; gap: 40px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 8vw, 56px);
+      color: var(--text); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 100px clamp(20px, 5vw, 60px) 60px;
+      gap: 60px;
+      position: relative;
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 24px;
+    }
+    .hero-tag::before {
+      content: ''; display: block; width: 32px; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 6vw, 88px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -2px;
+      margin-bottom: 8px;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-role {
+      font-size: clamp(14px, 2vw, 18px);
+      color: var(--text-muted);
+      font-weight: 300;
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 440px;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--accent); color: var(--bg);
+    }
+    .btn-primary:hover {
+      background: var(--accent2); transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(200,169,126,0.3);
+    }
+
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent); color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* ── PROFILE PHOTO ── */
+    .hero-right {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .photo-frame {
+      position: relative; width: clamp(260px, 35vw, 420px);
+    }
+
+    .photo-frame::before {
+      content: '';
+      position: absolute; inset: -12px -12px 12px 12px;
+      border: 1px solid var(--accent);
+      z-index: 0;
+    }
+
+    .photo-frame::after {
+      content: 'Available for Work';
+      position: absolute; top: -16px; right: -16px; z-index: 2;
+      background: var(--accent); color: var(--bg);
+      font-size: 9px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 12px;
+    }
+
+    .photo-img {
+      position: relative; z-index: 1;
+      width: 100%; aspect-ratio: 3/4; object-fit: cover;
+      display: block; filter: grayscale(20%);
+      transition: filter 0.4s;
+    }
+    .photo-frame:hover .photo-img { filter: grayscale(0%); }
+
+    /* placeholder if no image */
+    .photo-placeholder {
+      width: 100%; aspect-ratio: 3/4;
+      background: var(--surface2);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; position: relative; z-index: 1;
+    }
+    .photo-placeholder svg { opacity: 0.3; }
+    .photo-placeholder span {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .hero-stats {
+      position: absolute; bottom: -20px; left: -20px; z-index: 3;
+      display: flex; gap: 2px;
+    }
+
+    .stat-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+    }
+    .stat-chip strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 900;
+      color: var(--accent); line-height: 1;
+    }
+    .stat-chip span {
+      font-size: 10px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ── SECTION BASE ── */
+    section { position: relative; z-index: 1; }
+
+    .section-wrap {
+      padding: 100px clamp(20px, 5vw, 60px);
+    }
+
+    .section-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 60px; gap: 20px;
+    }
+
+    .section-label {
+      font-size: 10px; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900; line-height: 1.1;
+      letter-spacing: -1.5px;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--surface); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: start;
+    }
+
+    .about-text p {
+      color: var(--text-muted);
+      line-height: 1.9; margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .about-text p:first-child {
+      font-size: clamp(17px, 2vw, 20px);
+      color: var(--text); font-weight: 300;
+      line-height: 1.7;
+    }
+
+    .info-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .info-item {
+      display: grid; grid-template-columns: 120px 1fr;
+      gap: 16px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-key {
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-dim); padding-top: 2px;
+    }
+
+    .info-val { font-size: 14px; color: var(--text); }
+    .info-val a { color: var(--accent); text-decoration: none; }
+    .info-val a:hover { text-decoration: underline; }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--bg); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+    }
+
+    .skill-category {
+      background: var(--surface);
+      padding: 36px 32px;
+      transition: background 0.3s;
+    }
+    .skill-category:hover { background: var(--surface2); }
+
+    .skill-cat-title {
+      font-size: 10px; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .skill-items { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .skill-tag {
+      display: inline-block;
+      padding: 6px 14px;
+      font-size: 12px; font-weight: 500;
+      background: var(--border); color: var(--text);
+      transition: all 0.2s; cursor: default;
+    }
+    .skill-tag:hover {
+      background: var(--accent); color: var(--bg);
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--surface); }
+
+    .exp-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .exp-item {
+      background: var(--surface2);
+      padding: 36px 40px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 32px;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .exp-item:hover { background: #222; }
+
+    .exp-date {
+      font-size: 11px; letter-spacing: 1px;
+      color: var(--text-dim); padding-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .exp-role {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .exp-company {
+      font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .exp-desc {
+      font-size: 14px; color: var(--text-muted);
+      line-height: 1.8; max-width: 560px;
+    }
+
+    /* ── EDUCATION ── */
+    #education { background: var(--bg); }
+
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+    }
+
+    .edu-card {
+      background: var(--surface);
+      padding: 40px 36px;
+      position: relative; overflow: hidden;
+      transition: transform 0.3s;
+    }
+    .edu-card:hover { transform: translateY(-4px); }
+
+    .edu-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .edu-year {
+      font-size: 10px; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .edu-degree {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 700;
+      margin-bottom: 8px; line-height: 1.2;
+    }
+
+    .edu-school {
+      font-size: 13px; color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .edu-desc {
+      font-size: 13px; color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--surface); }
+
+    .contact-inner {
+      max-width: 640px; margin: 0 auto; text-align: center;
+    }
+
+    .contact-inner .section-label { text-align: center; }
+    .contact-inner .section-title { text-align: center; margin-bottom: 20px; }
+
+    .contact-sub {
+      color: var(--text-muted); line-height: 1.8;
+      margin-bottom: 48px; font-size: 15px;
+    }
+
+    .contact-links {
+      display: flex; flex-wrap: wrap;
+      gap: 12px; justify-content: center;
+      margin-bottom: 48px;
+    }
+
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      background: var(--surface2); color: var(--text);
+      text-decoration: none; font-size: 12px;
+      letter-spacing: 1px; text-transform: uppercase;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    .contact-link:hover {
+      border-color: var(--accent); color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 32px clamp(20px, 5vw, 60px);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 900;
+      color: var(--accent);
+    }
+
+    footer p {
+      font-size: 12px; color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1; transform: none;
+    }
+
+    /* ── DECORATIVE LINE ── */
+    .deco-line {
+      width: 1px; height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--border));
+      margin: 0 auto 24px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes loadBar {
+      to { width: 100%; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .mobile-menu { display: flex; }
+
+      #hero {
+        grid-template-columns: 1fr;
+        padding-top: 90px;
+        text-align: center;
+      }
+
+      .hero-left { order: 2; }
+      .hero-right { order: 1; }
+
+      .hero-desc { margin: 0 auto 40px; }
+
+      .hero-cta { justify-content: center; }
+
+      .photo-frame {
+        width: min(240px, 70vw);
+      }
+
+      .hero-stats {
+        position: static; margin-top: 16px;
+        justify-content: center;
+      }
+
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+
+      .exp-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .section-header {
+        flex-direction: column; align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-wrap { padding: 72px 20px; }
+      .exp-item { padding: 28px 24px; }
+      .edu-card { padding: 32px 24px; }
+      .skill-category { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <div class="loader-logo">AR</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+    <div class="loader-text">Memuat portfolio</div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">AR.</div>
+    <ul class="nav-links">
+      <li><a href="#about">Tentang</a></li>
+      <li><a href="#skills">Keahlian</a></li>
+      <li><a href="#experience">Pengalaman</a></li>
+      <li><a href="#education">Pendidikan</a></li>
+      <li><a href="#contact">Kontak</a></li>
+    </ul>
+    <div class="nav-toggle" id="navToggle">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" class="menu-link">Tentang</a>
+    <a href="#skills" class="menu-link">Keahlian</a>
+    <a href="#experience" class="menu-link">Pengalaman</a>
+    <a href="#education" class="menu-link">Pendidikan</a>
+    <a href="#contact" class="menu-link">Kontak</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left reveal">
+      <div class="hero-tag">UI/UX Designer & Developer</div>
+      <h1 class="hero-name">Keisya Salma<br><em>Fajar</em></h1>
+      <p class="hero-role">Full-Stack Developer · Bandung, Indonesia</p>
+      <p class="hero-desc">
+        Saya merancang dan membangun produk digital yang elegan — menggabungkan estetika yang tajam dengan fungsi yang kuat untuk menciptakan pengalaman yang tak terlupakan.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">Hubungi Saya</a>
+        <a href="#experience" class="btn btn-outline">Lihat Portofolio</a>
+      </div>
+    </div>
+
+    <div class="hero-right reveal">
+      <div class="photo-frame">
+        <!-- Ganti src dengan path foto Anda sendiri -->
+        <img
+          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&auto=format&fit=crop"
+          alt="Keisya Salma Fajar"
+          class="photo-img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="photo-placeholder" style="display:none;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          <span>Foto Profil</span>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-chip">
+            <strong>5+</strong>
+            <span>Tahun Exp</span>
+          </div>
+          <div class="stat-chip">
+            <strong>40+</strong>
+            <span>Proyek</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-wrap">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label">01 — Tentang Saya</div>
+          <h2 class="section-title">Siapa Saya?</h2>
+        </div>
+      </div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>
+            Seorang Full-Stack Developer dengan passion mendalam pada desain antarmuka dan performa aplikasi. Saya percaya bahwa kode yang baik adalah kode yang bercerita.
+          </p>
+          <p>
+            Dengan lebih dari 5 tahun pengalaman, saya telah bekerja bersama startup, agensi digital, dan perusahaan teknologi untuk menghadirkan solusi yang scalable dan berdampak nyata.
+          </p>
+          <p>
+            Di luar koding, saya aktif berkontribusi pada komunitas open-source dan menulis artikel teknis tentang web performance dan aksesibilitas.
+          </p>
+        </div>
+        <div class="info-list reveal">
+          <div class="info-item">
+            <span class="info-key">Nama Lengkap</span>
+            <span class="info-val">Keisya Salma Fajar Putra</span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">Lahir</span>
+            <span class="info-val">14 Februari 1998, Bandung</span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">Lokasi</span>
+            <span class="info-val">Bandung, Jawa Barat</span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">Email</span>
+            <span class="info-val"><a href="mailto:alex@example.com">alex@example.com</a></span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">Status</span>
+            <span class="info-val" style="color:var(--accent)">● Tersedia untuk hire</span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">Bahasa</span>
+            <span class="info-val">Indonesia (Native), Inggris (Fluent)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-wrap">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label">02 — Keahlian</div>
+          <h2 class="section-title">Teknologi &<br>Tools</h2>
+        </div>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-category reveal">
+          <div class="skill-cat-title">Frontend</div>
+          <div class="skill-items">
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Vue.js</span>
+            <span class="skill-tag">TypeScript</span>
+            <span class="skill-tag">Next.js</span>
+            <span class="skill-tag">Tailwind CSS</span>
+            <span class="skill-tag">Framer Motion</span>
+          </div>
+        </div>
+        <div class="skill-category reveal">
+          <div class="skill-cat-title">Backend</div>
+          <div class="skill-items">
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Express</span>
+            <span class="skill-tag">Laravel</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">REST API</span>
+            <span class="skill-tag">GraphQL</span>
+          </div>
+        </div>
+        <div class="skill-category reveal">
+          <div class="skill-cat-title">Database & Cloud</div>
+          <div class="skill-items">
+            <span class="skill-tag">PostgreSQL</span>
+            <span class="skill-tag">MongoDB</span>
+            <span class="skill-tag">MySQL</span>
+            <span class="skill-tag">Firebase</span>
+            <span class="skill-tag">AWS</span>
+            <span class="skill-tag">Docker</span>
+          </div>
+        </div>
+        <div class="skill-category reveal">
+          <div class="skill-cat-title">Design & Tools</div>
+          <div class="skill-items">
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">Adobe XD</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Linux</span>
+            <span class="skill-tag">Photoshop</span>
+            <span class="skill-tag">Jira</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-wrap">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label">03 — Pengalaman</div>
+          <h2 class="section-title">Riwayat<br>Karier</h2>
+        </div>
+      </div>
+      <div class="exp-list">
+        <div class="exp-item reveal">
+          <div class="exp-date">2022 — Sekarang</div>
+          <div>
+            <div class="exp-role">Senior Frontend Developer</div>
+            <div class="exp-company">PT. Teknologi Nusantara · Bandung</div>
+            <p class="exp-desc">Memimpin pengembangan antarmuka untuk platform SaaS B2B dengan 50.000+ pengguna aktif. Meningkatkan performa Core Web Vitals sebesar 40% melalui optimasi bundle dan rendering strategi.</p>
+          </div>
+        </div>
+        <div class="exp-item reveal">
+          <div class="exp-date">2020 — 2022</div>
+          <div>
+            <div class="exp-role">Full-Stack Developer</div>
+            <div class="exp-company">Kreasi Digital Studio · Jakarta</div>
+            <p class="exp-desc">Membangun dan memelihara lebih dari 15 proyek web klien dari berbagai industri. Bertanggung jawab atas arsitektur sistem, code review, dan mentoring junior developer.</p>
+          </div>
+        </div>
+        <div class="exp-item reveal">
+          <div class="exp-date">2019 — 2020</div>
+          <div>
+            <div class="exp-role">Junior Web Developer</div>
+            <div class="exp-company">Startup Lokal · Bandung</div>
+            <p class="exp-desc">Mengembangkan fitur-fitur pada platform e-commerce lokal menggunakan Laravel dan Vue.js. Terlibat dalam proses desain UI/UX hingga implementasi produksi.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-wrap">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label">04 — Pendidikan</div>
+          <h2 class="section-title">Latar<br>Belakang</h2>
+        </div>
+      </div>
+      <div class="edu-grid">
+        <div class="edu-card reveal">
+          <div class="edu-year">2015 — 2019</div>
+          <div class="edu-degree">S1 Teknik Informatika</div>
+          <div class="edu-school">Universitas Padjadjaran · Bandung</div>
+          <p class="edu-desc">IPK 3.78 · Skripsi: Implementasi Progressive Web App untuk Meningkatkan Aksesibilitas UMKM Digital.</p>
+        </div>
+        <div class="edu-card reveal">
+          <div class="edu-year">2022</div>
+          <div class="edu-degree">AWS Certified Developer</div>
+          <div class="edu-school">Amazon Web Services</div>
+          <p class="edu-desc">Sertifikasi resmi dalam pengembangan dan deploy aplikasi pada infrastruktur cloud AWS.</p>
+        </div>
+        <div class="edu-card reveal">
+          <div class="edu-year">2021</div>
+          <div class="edu-degree">Google UX Design Certificate</div>
+          <div class="edu-school">Google · Coursera</div>
+          <p class="edu-desc">Sertifikasi dalam proses desain UX end-to-end, dari riset pengguna hingga prototyping dan pengujian.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-wrap">
+      <div class="deco-line"></div>
+      <div class="contact-inner">
+        <div class="section-label reveal">05 — Kontak</div>
+        <h2 class="section-title reveal">Mari Berkolaborasi</h2>
+        <p class="contact-sub reveal">
+          Saya terbuka untuk peluang freelance, kolaborasi proyek, atau sekadar ngobrol tentang teknologi dan desain. Jangan ragu untuk menghubungi saya!
+        </p>
+        <div class="contact-links reveal">
+          <a href="mailto:alex@example.com" class="contact-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+            Email
+          </a>
+          <a href="https://linkedin.com" target="_blank" class="contact-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+          <a href="https://github.com" target="_blank" class="contact-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub
+          </a>
+          <a href="https://wa.me/6281234567890" target="_blank" class="contact-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+        <a href="mailto:alex@example.com" class="btn btn-primary reveal">
+          Mulai Percakapan
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">AR.</div>
+    <p>© 2025 Keisya Salma Fajar — Dibuat dengan ❤️ di Bandung</p>
+    <p>All rights reserved.</p>
+  </footer>
+
+  <script>
+    // ── LOADING SCREEN ──
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        loader.classList.add('hidden');
+        setTimeout(() => loader.remove(), 800);
+        initReveal();
+      }, 2800);
+    });
+
+    // ── SCROLL REVEAL ──
+    function initReveal() {
+      const els = document.querySelectorAll('.reveal');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('visible'), i * 80);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      els.forEach(el => obs.observe(el));
+    }
+
+    // ── MOBILE MENU ──
+    const toggle = document.getElementById('navToggle');
+    const menu = document.getElementById('mobileMenu');
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      menu.classList.toggle('open');
+      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+    });
+
+    document.querySelectorAll('.menu-link').forEach(link => {
+      link.addEventListener('click', () => {
+        toggle.classList.remove('active');
+        menu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // ── NAV SCROLL ──
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.boxShadow = window.scrollY > 20
+        ? '0 4px 40px rgba(0,0,0,0.5)' : '';
+    });
+
+    // ── SMOOTH SCROLL ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const el = document.querySelector(a.getAttribute('href'));
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+</html>
